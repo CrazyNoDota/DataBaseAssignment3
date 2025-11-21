@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>{{ action }} User</h1>
+    <form method="POST">
+        <label>Email:</label>
+        <input type="email" name="email" value="{{ user.email if user else '' }}" required>
+        
+        <label>Given Name:</label>
+        <input type="text" name="given_name" value="{{ user.given_name if user else '' }}" required>
+        
+        <label>Surname:</label>
+        <input type="text" name="surname" value="{{ user.surname if user else '' }}" required>
+        
+        <label>City:</label>
+        <input type="text" name="city" value="{{ user.city if user else '' }}">
+        
+        <label>Phone Number:</label>
+        <input type="text" name="phone_number" value="{{ user.phone_number if user else '' }}">
+        
+        <label>Password:</label>
+        <input type="password" name="password" value="{{ user.password if user else '' }}" required>
+        
+        <label>Profile Description:</label>
+        <textarea name="profile_description">{{ user.profile_description if user else '' }}</textarea>
+        
+        <button type="submit">Save</button>
+    </form>
+{% endblock %}
