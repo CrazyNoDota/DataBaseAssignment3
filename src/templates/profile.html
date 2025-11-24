@@ -12,6 +12,11 @@
             {% if user.caregiver_profile %}
                 <hr>
                 <h4>Caregiver Profile</h4>
+                {% if user.caregiver_profile.photo %}
+                    <div class="mb-3">
+                        <img src="{{ user.caregiver_profile.photo }}" alt="Caregiver Photo" class="img-thumbnail" style="max-width: 200px;">
+                    </div>
+                {% endif %}
                 <p><strong>Type:</strong> {{ user.caregiver_profile.caregiving_type }}</p>
                 <p><strong>Hourly Rate:</strong> ${{ user.caregiver_profile.hourly_rate }}</p>
                 <p><strong>Gender:</strong> {{ user.caregiver_profile.gender }}</p>

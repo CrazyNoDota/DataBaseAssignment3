@@ -111,10 +111,20 @@ def list_users():
     session = Session()
     # If Member, show only Caregivers
     if role == 'member':
-        # Join User to get names
-        caregivers = session.query(Caregiver).options(joinedload(Caregiver.user)).all()
-        # Transform to list of users for the template compatibility, or update template
-        # The template likely expects User objects. Let's pass User objects that are caregivers.
+        # Join User to get names and filter
+        query = session.query(Caregiver).join(User).options(joinedload(Caregiver.user))
+        
+        # Filtering
+        caregiving_type = request.args.get('caregiving_type')
+        city = request.args.get('city')
+        
+        if caregiving_type:
+            query = query.filter(Caregiver.caregiving_type == caregiving_type)
+        if city:
+            query = query.filter(User.city.ilike(f'%{city}%'))
+            
+        caregivers = query.all()
+        # Transform to list of users for the template compatibility
         users = [c.user for c in caregivers]
     else:
         # Fallback or Admin view (if existed)
@@ -308,6 +318,9 @@ def create_job():
                 member_user_id=flask_session.get('user_id'), # Use logged in user
                 required_caregiving_type=request.form['required_caregiving_type'],
                 other_requirements=request.form['other_requirements'],
+                person_age=request.form.get('person_age'),
+                time_interval=request.form.get('time_interval'),
+                frequency=request.form.get('frequency'),
                 date_posted=datetime.strptime(request.form['date_posted'], '%Y-%m-%d').date()
             )
             session.add(new_job)

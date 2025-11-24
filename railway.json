@@ -1,0 +1,20 @@
+{
+  : https://railway.com/railway.schema.json,
+  build: {
+    builder: RAILPACK
+  },
+  deploy: {
+    runtime: V2,
+    numReplicas: 1,
+    startCommand: gunicorn wsgi:app,
+    sleepApplication: false,
+    useLegacyStacker: false,
+    multiRegionConfig: {
+      us-east4-eqdc4a: {
+        numReplicas: 1
+      }
+    },
+    restartPolicyType: ON_FAILURE,
+    restartPolicyMaxRetries: 10
+  }
+}

@@ -31,7 +31,7 @@ CREATE TABLE caregivers (
   caregiver_user_id INT NOT NULL,
   photo VARCHAR(255),
   gender VARCHAR(20),
-  caregiving_type ENUM('babysitter','elderly_care','playmate') NOT NULL,
+  caregiving_type ENUM('babysitter','elderly_care','playmate','supertype') NOT NULL,
   hourly_rate DECIMAL(6,2) NOT NULL CHECK (hourly_rate >= 0),
   PRIMARY KEY (caregiver_user_id),
   CONSTRAINT fk_caregivers_users FOREIGN KEY (caregiver_user_id) REFERENCES users(user_id) ON DELETE CASCADE
@@ -60,8 +60,11 @@ CREATE TABLE address (
 CREATE TABLE job (
   job_id INT AUTO_INCREMENT PRIMARY KEY,
   member_user_id INT NOT NULL,
-  required_caregiving_type ENUM('babysitter','elderly_care','playmate') NOT NULL,
+  required_caregiving_type ENUM('babysitter','elderly_care','playmate','supertype') NOT NULL,
   other_requirements TEXT,
+  person_age INT,
+  time_interval VARCHAR(100),
+  frequency VARCHAR(100),
   date_posted TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_job_members FOREIGN KEY (member_user_id) REFERENCES members(member_user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

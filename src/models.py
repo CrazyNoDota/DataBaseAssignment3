@@ -61,6 +61,9 @@ class Job(Base):
     member_user_id = Column(Integer, ForeignKey('members.member_user_id'))
     required_caregiving_type = Column(String(50))
     other_requirements = Column(Text)
+    person_age = Column(Integer)
+    time_interval = Column(String(100))
+    frequency = Column(String(100))
     date_posted = Column(Date)
 
     member = relationship("Member", back_populates="jobs")

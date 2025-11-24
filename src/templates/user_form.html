@@ -60,7 +60,13 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Caregiving Type:</label>
-                <input type="text" name="caregiving_type" class="form-control" value="{{ user.caregiver_profile.caregiving_type if user and user.caregiver_profile else '' }}">
+                <select name="caregiving_type" class="form-select">
+                    <option value="">Select Type...</option>
+                    <option value="babysitter" {% if user and user.caregiver_profile and user.caregiver_profile.caregiving_type == 'babysitter' %}selected{% endif %}>Babysitter</option>
+                    <option value="elderly_care" {% if user and user.caregiver_profile and user.caregiver_profile.caregiving_type == 'elderly_care' %}selected{% endif %}>Elderly Care</option>
+                    <option value="playmate" {% if user and user.caregiver_profile and user.caregiver_profile.caregiving_type == 'playmate' %}selected{% endif %}>Playmate for Children</option>
+                    <option value="supertype" {% if user and user.caregiver_profile and user.caregiver_profile.caregiving_type == 'supertype' %}selected{% endif %}>Supertype</option>
+                </select>
             </div>
             <div class="mb-3">
                 <label class="form-label">Hourly Rate:</label>

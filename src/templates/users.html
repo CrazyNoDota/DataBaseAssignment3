@@ -6,6 +6,33 @@
     <a href="/users/create" class="btn btn-success mb-3">Register New User</a>
     {% endif %}
 
+    {% if session.get('role') == 'member' %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="GET" action="/users" class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Caregiving Type</label>
+                    <select name="caregiving_type" class="form-select">
+                        <option value="">All Types</option>
+                        <option value="babysitter" {% if request.args.get('caregiving_type') == 'babysitter' %}selected{% endif %}>Babysitter</option>
+                        <option value="elderly_care" {% if request.args.get('caregiving_type') == 'elderly_care' %}selected{% endif %}>Elderly Care</option>
+                        <option value="playmate" {% if request.args.get('caregiving_type') == 'playmate' %}selected{% endif %}>Playmate for Children</option>
+                        <option value="supertype" {% if request.args.get('caregiving_type') == 'supertype' %}selected{% endif %}>Supertype</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">City</label>
+                    <input type="text" name="city" class="form-control" placeholder="Enter city" value="{{ request.args.get('city', '') }}">
+                </div>
+                <div class="col-md-4 align-self-end">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                    <a href="/users" class="btn btn-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
     <table class="table table-striped">
         <thead>
             <tr>

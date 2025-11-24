@@ -23,6 +23,9 @@
         <thead>
             <tr>
                 <th>Type</th>
+                <th>Age</th>
+                <th>Time</th>
+                <th>Frequency</th>
                 <th>Requirements</th>
                 <th>Date Posted</th>
                 <th>Action</th>
@@ -32,6 +35,9 @@
             {% for job in jobs %}
             <tr>
                 <td>{{ job.required_caregiving_type }}</td>
+                <td>{{ job.person_age }}</td>
+                <td>{{ job.time_interval }}</td>
+                <td>{{ job.frequency }}</td>
                 <td>{{ job.other_requirements }}</td>
                 <td>{{ job.date_posted }}</td>
                 <td>
