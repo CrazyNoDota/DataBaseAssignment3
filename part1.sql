@@ -149,18 +149,18 @@ INSERT INTO address (member_user_id,house_number,street,town) VALUES
 
 -- JOB: 10 job postings (use interval syntax compatible with MySQL)
 INSERT INTO job (member_user_id,required_caregiving_type,other_requirements,date_posted) VALUES
-(2,'elderly_care','soft-spoken; experience with dementia; valid certificate',CURRENT_TIMESTAMP - INTERVAL 20 DAY),
-(4,'babysitter','experience with toddlers; CPR certified',CURRENT_TIMESTAMP - INTERVAL 10 DAY),
-(12,'babysitter','no allergies; soft-spoken preferred',CURRENT_TIMESTAMP - INTERVAL 9 DAY),
-(1,'babysitter','playful; likes painting; available 09:00-12:00',CURRENT_TIMESTAMP - INTERVAL 5 DAY),
-(11,'elderly_care','no pets; soft-spoken; weekends only',CURRENT_TIMESTAMP - INTERVAL 4 DAY),
+(2,'elderly_care','soft-spoken, experience with dementia, valid certificate',CURRENT_TIMESTAMP - INTERVAL 20 DAY),
+(4,'babysitter','experience with toddlers, CPR certified',CURRENT_TIMESTAMP - INTERVAL 10 DAY),
+(12,'babysitter','no allergies, soft-spoken preferred',CURRENT_TIMESTAMP - INTERVAL 9 DAY),
+(1,'babysitter','playful, likes painting, available 09:00-12:00',CURRENT_TIMESTAMP - INTERVAL 5 DAY),
+(11,'elderly_care','no pets, soft-spoken, weekends only',CURRENT_TIMESTAMP - INTERVAL 4 DAY),
 (5,'babysitter','must help with feeding and nap schedule',CURRENT_TIMESTAMP - INTERVAL 15 DAY),
-(3,'playmate','energetic; must play outdoors',CURRENT_TIMESTAMP - INTERVAL 3 DAY),
+(3,'playmate','energetic, must play outdoors',CURRENT_TIMESTAMP - INTERVAL 3 DAY),
 (6,'elderly_care','overnight experience preferred',CURRENT_TIMESTAMP - INTERVAL 2 DAY),
 (7,'babysitter','twins experience required',CURRENT_TIMESTAMP - INTERVAL 1 DAY),
-(9,'elderly_care','patient; no loud music',CURRENT_TIMESTAMP - INTERVAL 7 DAY);
+(9,'elderly_care','patient, no loud music',CURRENT_TIMESTAMP - INTERVAL 7 DAY);
 
--- JOB_APPLICATION: create several applications; multiple applicants per job
+-- JOB_APPLICATION: create several applications, multiple applicants per job
 INSERT INTO job_application (caregiver_user_id,job_id,date_applied) VALUES
 (1,2,CURRENT_TIMESTAMP - INTERVAL 9 DAY),
 (5,2,CURRENT_TIMESTAMP - INTERVAL 8 DAY),

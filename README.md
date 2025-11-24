@@ -4,8 +4,8 @@ This project implements a database system for an Online Caregivers Platform usin
 
 ## Project Structure
 
+- `part1.sql`: SQL script for schema creation and initial data seeding.
 - `src/models.py`: SQLAlchemy models defining the database schema.
-- `src/seed_data.py`: Script to create tables and insert initial data (Part 1).
 - `src/part2_queries.py`: Script to execute queries and updates (Part 2).
 - `src/app.py`: Flask web application for CRUD operations (Part 3).
 - `src/templates/`: HTML templates for the web application.
@@ -13,41 +13,59 @@ This project implements a database system for an Online Caregivers Platform usin
 
 ## Setup Instructions
 
-1.  **Prerequisites:**
-    - Ensure you have MySQL installed and running.
-    - Create a database named `caregivers_db` (or update the connection string in the scripts to match your database name).
-    - Create a user `root` with password `password` (or update the connection string in the scripts to match your credentials).
+### 1. Prerequisites
+- Python 3.x
+- Docker (for running the MySQL database)
 
-2.  **Install Dependencies:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+### 2. Environment Setup
 
-3.  **Configure Database Connection:**
-    Update the `DATABASE_URL` in `src/seed_data.py`, `src/part2_queries.py`, and `src/app.py` with your MySQL connection details:
-    `mysql+mysqlconnector://username:password@localhost/dbname`
+Create and activate a virtual environment:
 
-4.  **Initialize Database:**
-    Run the seed script to create the tables and populate them with data.
-    ```bash
-    cd src
-    python seed_data.py
-    ```
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows use: venv\Scripts\activate
+```
 
-5.  **Run Queries (Part 2):**
-    Execute the script to perform the requested updates and queries.
-    ```bash
-    cd src
-    python part2_queries.py
-    ```
+Install dependencies:
 
-6.  **Run Web Application (Part 3):**
-    Start the Flask server.
-    ```bash
-    cd src
-    python app.py
-    ```
-    Open your browser and navigate to `http://127.0.0.1:5000`.
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Database Setup (Docker)
+
+Start the MySQL container using Docker. This command runs a MySQL 8.0 instance on port 3307 with the required credentials.
+
+```bash
+docker run --name caregivers-mysql-3307 -e MYSQL_ROOT_PASSWORD=rootpassword -e MYSQL_DATABASE=caregivers_db -p 3307:3306 -d mysql:8.0
+```
+
+*Note: The application is configured to connect to `localhost:3307` with user `root` and password `rootpassword`.*
+
+### 4. Initialize Database & Run Web Application (Part 3)
+
+The application is designed to automatically initialize the database using the `part1.sql` file when it starts.
+
+Run the Flask application:
+
+```bash
+cd src
+python app.py
+```
+
+- The database tables will be created and seeded automatically.
+- Open your browser and navigate to `http://127.0.0.1:5000`.
+
+### 5. Run Queries (Part 2)
+
+To execute the specific queries and updates required for Part 2 of the assignment:
+
+```bash
+cd src
+python part2_queries.py
+```
+
+This script connects to the same MySQL database and performs the required operations, printing the results to the console.
 
 ## Database Configuration
 

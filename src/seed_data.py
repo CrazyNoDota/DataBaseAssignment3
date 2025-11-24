@@ -2,20 +2,19 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from datetime import date, time
 from models import Base, User, Caregiver, Member, Address, Job, JobApplication, Appointment
+import os
 
-# Setup database connection
-# Using MySQL
-# Update the connection string with your MySQL credentials: 'mysql+mysqlconnector://username:password@localhost/dbname'
-DATABASE_URL = 'mysql+mysqlconnector://root:password@localhost/caregivers_db'
+# MySQL Connection
+DATABASE_URL = 'mysql+mysqlconnector://root:rootpassword@localhost:3307/caregivers_db'
 
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()
 
 def init_db():
-    # Create tables
-    Base.metadata.create_all(engine)
-    print("Tables created successfully.")
+    # Tables are created via part1.sql in app.py or manually
+    # Base.metadata.create_all(engine)
+    print("Assuming tables are created via SQL script.")
 
 def seed_data():
     # Check if data already exists to avoid duplicates if run multiple times

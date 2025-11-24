@@ -1,22 +1,44 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session as flask_session
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, joinedload
 from models import Base, User, Caregiver, Member, Job, JobApplication, Appointment, Address
 from datetime import datetime
 from functools import wraps
+import os
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 # DATABASE CONFIGURATION
-# Update the connection string with your MySQL credentials: 'mysql+mysqlconnector://username:password@localhost/dbname'
-DATABASE_URL = 'mysql+mysqlconnector://root:password@localhost/caregivers_db'
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# MySQL Connection
+DATABASE_URL = 'mysql+mysqlconnector://root:rootpassword@localhost:3307/caregivers_db'
 
 engine = create_engine(DATABASE_URL)
-engine.connect()
 
-Base.metadata.create_all(engine)
+def init_db_from_sql():
+    sql_file_path = os.path.join(BASE_DIR, 'part1.sql')
+    print(f"Executing SQL script from: {sql_file_path}")
+    try:
+        with open(sql_file_path, 'r') as file:
+            sql_script = file.read()
+        
+        with engine.connect() as connection:
+            # Split statements and execute
+            # Note: This simple split might fail on semicolons inside strings, but for this assignment's SQL it should be fine.
+            statements = sql_script.split(';')
+            for statement in statements:
+                if statement.strip():
+                    connection.execute(text(statement))
+            connection.commit()
+        print("Database initialized from SQL script.")
+    except Exception as e:
+        print(f"Error initializing database: {e}")
+
+# Initialize database
+init_db_from_sql()
+
 Session = sessionmaker(bind=engine)
 
 # Login Required Decorator
@@ -149,7 +171,10 @@ def edit_user(id):
         return redirect(url_for('view_profile', id=id))
 
     session = Session()
-    user = session.query(User).get(id)
+    user = session.query(User).options(
+        joinedload(User.caregiver_profile),
+        joinedload(User.member_profile).joinedload(Member.address)
+    ).get(id)
     if request.method == 'POST':
         user.email = request.form['email']
         user.given_name = request.form['given_name']
@@ -412,37 +437,6 @@ def delete_appointment(id):
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
 
-@app.route('/appointments/<int:id>/update', methods=['POST'])
-def update_appointment(id):
-    session = Session()
-    try:
-        appointment = session.query(Appointment).get(id)
-        if 'status' in request.form:
-            appointment.status = request.form['status']
-        session.commit()
-        flash('Appointment updated successfully!', 'success')
-    except Exception as e:
-        session.rollback()
-        flash(f'Error updating appointment: {str(e)}', 'danger')
-    finally:
-        session.close()
-    return redirect(url_for('list_appointments'))
-
-@app.route('/appointments/<int:id>/delete', methods=['POST'])
-def delete_appointment(id):
-    session = Session()
-    try:
-        appointment = session.query(Appointment).get(id)
-        if appointment:
-            session.delete(appointment)
-            session.commit()
-            flash('Appointment cancelled successfully!', 'success')
-    except Exception as e:
-        session.rollback()
-        flash(f'Error cancelling appointment: {str(e)}', 'danger')
-    finally:
-        session.close()
-    return redirect(url_for('list_appointments'))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
