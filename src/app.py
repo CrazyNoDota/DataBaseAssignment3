@@ -13,7 +13,11 @@ app.secret_key = 'supersecretkey'
 # DATABASE CONFIGURATION
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # MySQL Connection
-DATABASE_URL = 'mysql+mysqlconnector://root:rootpassword@localhost:3307/caregivers_db'
+DATABASE_URL = os.environ.get('DATABASE_URL') or 'mysql+mysqlconnector://root:rootpassword@localhost:3307/caregivers_db'
+
+# Ensure correct driver for SQLAlchemy
+if DATABASE_URL.startswith('mysql://'):
+    DATABASE_URL = DATABASE_URL.replace('mysql://', 'mysql+mysqlconnector://', 1)
 
 engine = create_engine(DATABASE_URL)
 
