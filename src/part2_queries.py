@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 from models import Base, User, Caregiver, Member, Address, Job, JobApplication, Appointment
 import os
 
-# MySQL Connection
+
 DATABASE_URL = 'mysql+mysqlconnector://root:rootpassword@localhost:3307/caregivers_db'
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
@@ -12,7 +12,7 @@ session = Session()
 def run_queries():
     print("--- Part 2: Queries and Updates ---\n")
 
-    # --- 3.1 Update the phone number of Arman Armanov to +77773414141 ---
+    
     print("3.1 Updating phone number of Arman Armanov...")
     arman = session.query(User).filter_by(given_name="Arman", surname="Armanov").first()
     if arman:
@@ -23,7 +23,7 @@ def run_queries():
         print("Arman Armanov not found.")
     print("-" * 20)
 
-    # --- 3.2 Add $0.3 commission fee to the Caregivers’ hourly rate if it's less than $10, or 10% if it's not. ---
+    
     print("3.2 Updating hourly rates...")
     caregivers = session.query(Caregiver).all()
     for c in caregivers:
@@ -36,11 +36,11 @@ def run_queries():
     session.commit()
     print("-" * 20)
 
-    # --- 4.1 Delete the jobs posted by Amina Aminova. ---
+    
     print("4.1 Deleting jobs posted by Amina Aminova...")
     amina = session.query(User).filter_by(given_name="Amina", surname="Aminova").first()
     if amina:
-        # Find jobs by Amina
+        
         jobs_to_delete = session.query(Job).filter_by(member_user_id=amina.user_id).all()
         count = len(jobs_to_delete)
         for job in jobs_to_delete:
@@ -51,20 +51,20 @@ def run_queries():
         print("Amina Aminova not found.")
     print("-" * 20)
 
-    # --- 4.2 Delete all members who live on Kabanbay Batyr street. ---
+    
     print("4.2 Deleting members on Kabanbay Batyr street...")
-    # Find addresses
+    
     addresses = session.query(Address).filter(Address.street.like("%Kabanbay Batyr%")).all()
     deleted_count = 0
     for addr in addresses:
         member = session.query(Member).filter_by(member_user_id=addr.member_user_id).first()
         if member:
-            # We need to delete the User as well since Member is just a profile? 
-            # The schema implies Member is a separate entity but linked. 
-            # Usually deleting the Member profile is enough, but let's delete the User to be thorough if that's the intent.
-            # However, the prompt says "Delete all members". I'll delete the Member record.
-            # Due to cascade, deleting Member might delete Address.
-            # Let's delete the User entity associated with the member to fully remove them from the system.
+            
+            
+            
+            
+            
+            
             user_to_delete = session.query(User).filter_by(user_id=member.member_user_id).first()
             if user_to_delete:
                 session.delete(user_to_delete)
@@ -73,7 +73,7 @@ def run_queries():
     print(f"Deleted {deleted_count} members living on Kabanbay Batyr street.")
     print("-" * 20)
 
-    # --- 5.1 Select caregiver and member names for the accepted appointments. ---
+    
     print("5.1 Caregiver and Member names for accepted appointments:")
     
     from sqlalchemy.orm import aliased
@@ -94,19 +94,19 @@ def run_queries():
         print(f"Caregiver: {row[0]} {row[1]}, Member: {row[2]} {row[3]}")
     print("-" * 20)
 
-    # --- 5.2 List job ids that contain ‘soft-spoken’ in their other requirements. ---
+    
     print("5.2 Job IDs with 'soft-spoken' requirement:")
     jobs = session.query(Job.job_id).filter(Job.other_requirements.like("%soft-spoken%")).all()
     for j in jobs:
         print(f"Job ID: {j.job_id}")
     print("-" * 20)
 
-    # --- 5.3 List the work hours of all babysitter positions. ---
-    # Assuming "babysitter positions" means Jobs requiring 'babysitter' or Appointments?
-    # "positions" usually refers to Jobs. But Jobs don't have "work hours" in the schema (only Appointments do).
-    # Jobs have "preferred time intervals" in description but not a specific column in schema.
-    # Appointments have "work_hours".
-    # Let's assume it means "work_hours" from Appointments where the caregiver is a babysitter.
+    
+    
+    
+    
+    
+    
     print("5.3 Work hours of all babysitter appointments:")
     hours = session.query(Appointment.work_hours)\
         .join(Caregiver, Appointment.caregiver_user_id == Caregiver.caregiver_user_id)\
@@ -115,12 +115,12 @@ def run_queries():
         print(f"Hours: {h.work_hours}")
     print("-" * 20)
 
-    # --- 5.4 List the members who are looking for Elderly Care in Astana and have “No pets.” rule. ---
+    
     print("5.4 Members looking for Elderly Care in Astana with 'No pets.' rule:")
-    # "Looking for Elderly Care" -> Posted a Job with required_caregiving_type = 'caregiver for elderly'
-    # OR Member profile description? The query implies checking Jobs or Member attributes.
-    # "have 'No pets.' rule" -> Member.house_rules
-    # "in Astana" -> Address.town
+    
+    
+    
+    
     
     members = session.query(User.given_name, User.surname)\
         .join(Member, User.user_id == Member.member_user_id)\
@@ -136,9 +136,9 @@ def run_queries():
         print(f"Member: {m.given_name} {m.surname}")
     print("-" * 20)
 
-    # --- 6.1 Count the number of applicants for each job posted by a member ---
+    
     print("6.1 Number of applicants for each job:")
-    # Group by Job
+    
     results = session.query(Job.job_id, func.count(JobApplication.caregiver_user_id))\
         .outerjoin(JobApplication, Job.job_id == JobApplication.job_id)\
         .group_by(Job.job_id).all()
@@ -146,27 +146,27 @@ def run_queries():
         print(f"Job {r[0]}: {r[1]} applicants")
     print("-" * 20)
 
-    # --- 6.2 Total hours spent by care givers for all accepted appointments ---
+    
     print("6.2 Total hours spent by caregivers for accepted appointments:")
     total_hours = session.query(func.sum(Appointment.work_hours))\
         .filter(Appointment.status == "Confirmed").scalar()
     print(f"Total Hours: {total_hours}")
     print("-" * 20)
 
-    # --- 6.3 Average pay of caregivers based on accepted appointments ---
+    
     print("6.3 Average pay of caregivers (hourly rate) based on accepted appointments:")
-    # This could mean average of (hourly_rate * work_hours) OR just average of hourly_rate of caregivers who have appointments.
-    # "Average pay of caregivers" usually means their rate.
-    # Let's calculate average hourly rate of caregivers involved in confirmed appointments.
+    
+    
+    
     avg_rate = session.query(func.avg(Caregiver.hourly_rate))\
         .join(Appointment, Caregiver.caregiver_user_id == Appointment.caregiver_user_id)\
         .filter(Appointment.status == "Confirmed").scalar()
     print(f"Average Hourly Rate: {avg_rate}")
     print("-" * 20)
 
-    # --- 6.4 Caregivers who earn above average based on accepted appointments ---
+    
     print("6.4 Caregivers earning above average:")
-    # Subquery for average
+    
     subquery = session.query(func.avg(Caregiver.hourly_rate))\
         .join(Appointment, Caregiver.caregiver_user_id == Appointment.caregiver_user_id)\
         .filter(Appointment.status == "Confirmed").scalar_subquery()
@@ -182,18 +182,18 @@ def run_queries():
         print(f"{c.given_name} {c.surname}: {c.hourly_rate}")
     print("-" * 20)
 
-    # --- Derived Attribute: Calculate the total cost to pay for a caregiver for all accepted appointments. ---
+    
     print("Derived Attribute: Total cost for all accepted appointments:")
-    # Cost = hourly_rate * work_hours
+    
     total_cost = session.query(func.sum(Caregiver.hourly_rate * Appointment.work_hours))\
         .join(Appointment, Caregiver.caregiver_user_id == Appointment.caregiver_user_id)\
         .filter(Appointment.status == "Confirmed").scalar()
     print(f"Total Cost: {total_cost}")
     print("-" * 20)
 
-    # --- View Operation: View all job applications and the applicants. ---
+    
     print("View Operation: Job Applications and Applicants:")
-    # Simulating a view with a query
+    
     results = session.query(
         Job.job_id, 
         Job.required_caregiving_type, 
