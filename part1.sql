@@ -1,7 +1,3 @@
--- MySQL-compatible DDL + seed data for the Online Caregivers Platform
--- Save as part1_mysql.sql
-
--- turn off FK checks to allow clean drops in any order
 SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS appointment;
@@ -14,7 +10,7 @@ DROP TABLE IF EXISTS users;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
--- 1) Users (base table)
+-- 1) Users
 CREATE TABLE users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
@@ -46,7 +42,7 @@ CREATE TABLE members (
   CONSTRAINT fk_members_users FOREIGN KEY (member_user_id) REFERENCES users(user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 4) Address (one-to-one for members in this design)
+-- 4) Address 
 CREATE TABLE address (
   member_user_id INT NOT NULL,
   house_number VARCHAR(20),
@@ -92,11 +88,7 @@ CREATE TABLE appointment (
   CONSTRAINT fk_app_member FOREIGN KEY (member_user_id) REFERENCES members(member_user_id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ============================
--- Seed data (>= 10 rows per table)
--- ============================
-
--- USERS: create 12 users (some caregivers, some members)
+-- USERS
 INSERT INTO users (email,given_name,surname,city,phone_number,profile_description,password) VALUES
 ('arman@example.com','Arman','Armanov','Astana','+77770000001','Experienced caregiver','pass123'),
 ('amina@example.com','Amina','Aminova','Almaty','+77001112233','Looking for part-time help','pass123'),
@@ -111,7 +103,7 @@ INSERT INTO users (email,given_name,surname,city,phone_number,profile_descriptio
 ('amina2@example.com','Amina','K','Kokshetau','+77001112242','Posting jobs often','pass123'),
 ('stepan@example.com','Stepan','Ivanov','Astana','+77001112243','Willing to travel','pass123');
 
--- CAREGIVERS: 10 caregivers mapped to user IDs 1..12 (some ordering)
+-- CAREGIVERS
 INSERT INTO caregivers (caregiver_user_id,photo,gender,caregiving_type,hourly_rate) VALUES
 (1,'/photos/arman.jpg','male','babysitter',8.50),
 (3,'/photos/dina.jpg','female','playmate',6.00),
@@ -124,7 +116,7 @@ INSERT INTO caregivers (caregiver_user_id,photo,gender,caregiving_type,hourly_ra
 (2,'/photos/amina_cg.jpg','female','babysitter',9.00),
 (11,'/photos/amina2_cg.jpg','female','elderly_care',8.75);
 
--- MEMBERS: 10 members (deterministic user IDs to avoid placeholders)
+-- MEMBERS
 INSERT INTO members (member_user_id,house_rules,dependent_description) VALUES
 (2,'No smoking. No pets.','I have a 72-year-old mother with mild dementia.'),
 (4,'No pets. Respect sleep hours.','Looking after 3-year-old daughter.'),
@@ -137,7 +129,7 @@ INSERT INTO members (member_user_id,house_rules,dependent_description) VALUES
 (7,'No pets.','Playmate for 4-year-old twins.'),
 (9,'No smoking. No pets.','One toddler who likes reading.');
 
--- ADDRESS: 10 addresses for the above members
+-- ADDRESS
 INSERT INTO address (member_user_id,house_number,street,town) VALUES
 (2,'12A','Kabanbay Batyr','Astana'),
 (4,'5','Tauelsizdik Ave','Astana'),
@@ -150,7 +142,7 @@ INSERT INTO address (member_user_id,house_number,street,town) VALUES
 (7,'2','Auezov St','Shymkent'),
 (9,'88','Kabanbay Batyr','Astana');
 
--- JOB: 10 job postings (use interval syntax compatible with MySQL)
+-- JOB
 INSERT INTO job (member_user_id,required_caregiving_type,other_requirements,date_posted) VALUES
 (2,'elderly_care','soft-spoken, experience with dementia, valid certificate',CURRENT_TIMESTAMP - INTERVAL 20 DAY),
 (4,'babysitter','experience with toddlers, CPR certified',CURRENT_TIMESTAMP - INTERVAL 10 DAY),
@@ -177,7 +169,7 @@ INSERT INTO job_application (caregiver_user_id,job_id,date_applied) VALUES
 (8,6,CURRENT_TIMESTAMP - INTERVAL 14 DAY),
 (1,4,CURRENT_TIMESTAMP - INTERVAL 6 DAY);
 
--- APPOINTMENT: create 10 appointments with varied status (including confirmed)
+-- APPOINTMENT
 INSERT INTO appointment (caregiver_user_id,member_user_id,appointment_date,appointment_time,work_hours,status) VALUES
 (1,1,'2025-11-10','09:00:00',3,'confirmed'),
 (5,5,'2025-11-12','10:00:00',2,'pending'),

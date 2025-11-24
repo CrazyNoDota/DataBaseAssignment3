@@ -11,7 +11,6 @@ session = Session()
 
 def run_queries():
     print("--- Part 2: Queries and Updates ---\n")
-
     
     print("3.1 Updating phone number of Arman Armanov...")
     arman = session.query(User).filter_by(given_name="Arman", surname="Armanov").first()
