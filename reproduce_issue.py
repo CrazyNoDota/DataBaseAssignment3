@@ -19,8 +19,9 @@ def test_login():
         init_db_from_sql()
         
         # Create session
-        engine = create_engine('mysql+mysqlconnector://root:rootpassword@localhost:3307/caregivers_db')
-        Session = sessionmaker(bind=engine)
+        # Use the engine from app.py instead of creating a new one with hardcoded string
+        # engine = create_engine('mysql+mysqlconnector://root:rootpassword@localhost:3307/caregivers_db')
+        from app import engine, Session
         session = Session()
         
         email = 'arman@example.com'

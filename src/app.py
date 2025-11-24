@@ -13,11 +13,16 @@ app.secret_key = 'supersecretkey'
 # DATABASE CONFIGURATION
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # MySQL Connection
-DATABASE_URL = os.environ.get('DATABASE_URL') or 'mysql+mysqlconnector://root:rootpassword@localhost:3307/caregivers_db'
+# Check for DATABASE_URL or MYSQL_URL (Railway sometimes uses MYSQL_URL)
+DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('MYSQL_URL') or 'mysql+pymysql://root:rootpassword@localhost:3307/caregivers_db'
 
 # Ensure correct driver for SQLAlchemy
 if DATABASE_URL.startswith('mysql://'):
-    DATABASE_URL = DATABASE_URL.replace('mysql://', 'mysql+mysqlconnector://', 1)
+    DATABASE_URL = DATABASE_URL.replace('mysql://', 'mysql+pymysql://', 1)
+elif DATABASE_URL.startswith('mysql+mysqlconnector://'):
+    DATABASE_URL = DATABASE_URL.replace('mysql+mysqlconnector://', 'mysql+pymysql://', 1)
+
+print(f"Connecting to database at: {DATABASE_URL.split('@')[-1].split('/')[0]}") # Log host only for security
 
 engine = create_engine(DATABASE_URL)
 
@@ -30,11 +35,24 @@ def init_db_from_sql():
         
         with engine.connect() as connection:
             # Split statements and execute
-            # Note: This simple split might fail on semicolons inside strings, but for this assignment's SQL it should be fine.
             statements = sql_script.split(';')
             for statement in statements:
-                if statement.strip():
-                    connection.execute(text(statement))
+                # Remove comments and whitespace
+                clean_stmt = []
+                for line in statement.splitlines():
+                    # Remove comments starting with --
+                    line = line.split('--')[0].strip()
+                    if line:
+                        clean_stmt.append(line)
+                
+                final_stmt = ' '.join(clean_stmt)
+                
+                if final_stmt:
+                    try:
+                        connection.execute(text(final_stmt))
+                    except Exception as stmt_err:
+                        print(f"Warning: Failed to execute statement: {final_stmt[:50]}... Error: {stmt_err}")
+            
             connection.commit()
         print("Database initialized from SQL script.")
     except Exception as e:
