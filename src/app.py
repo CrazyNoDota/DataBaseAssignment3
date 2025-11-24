@@ -68,30 +68,34 @@ def login():
         email = request.form['email']
         password = request.form['password']
         
-        session = Session()
-        # Eager load profiles to determine role
-        user = session.query(User).options(
-            joinedload(User.caregiver_profile),
-            joinedload(User.member_profile)
-        ).filter_by(email=email).first()
-        session.close()
-        
-        if user and user.password == password: # In production, use password hashing!
-            flask_session['user_id'] = user.user_id
-            flask_session['user_name'] = user.given_name
+        try:
+            session = Session()
+            # Eager load profiles to determine role
+            user = session.query(User).options(
+                joinedload(User.caregiver_profile),
+                joinedload(User.member_profile)
+            ).filter_by(email=email).first()
+            session.close()
             
-            # Determine Role
-            if user.caregiver_profile:
-                flask_session['role'] = 'caregiver'
-            elif user.member_profile:
-                flask_session['role'] = 'member'
-            else:
-                flask_session['role'] = 'unknown'
+            if user and user.password == password: # In production, use password hashing!
+                flask_session['user_id'] = user.user_id
+                flask_session['user_name'] = user.given_name
+                
+                # Determine Role
+                if user.caregiver_profile:
+                    flask_session['role'] = 'caregiver'
+                elif user.member_profile:
+                    flask_session['role'] = 'member'
+                else:
+                    flask_session['role'] = 'unknown'
 
-            flash(f'Welcome back, {user.given_name}!', 'success')
-            return redirect(url_for('index'))
-        else:
-            flash('Invalid email or password.', 'danger')
+                flash(f'Welcome back, {user.given_name}!', 'success')
+                return redirect(url_for('index'))
+            else:
+                flash('Invalid email or password.', 'danger')
+        except Exception as e:
+            flash(f'Login error: {str(e)}', 'danger')
+            print(f"Login error: {e}") # Log it as well
             
     return render_template('login.html')
 

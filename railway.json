@@ -6,7 +6,7 @@
   "deploy": {
     "runtime": "V2",
     "numReplicas": 1,
-    "startCommand": "gunicorn wsgi:app",
+    "startCommand": "gunicorn wsgi:app --workers 1 --threads 8 --timeout 0",
     "sleepApplication": false,
     "useLegacyStacker": false,
     "multiRegionConfig": {
