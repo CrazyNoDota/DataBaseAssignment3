@@ -1,4 +1,5 @@
 Flask==3.0.0
-SQLAlchemy==2.0.23
+SQLAlchemy>=2.0.44
 mysql-connector-python
 gunicorn
+typing-extensions>=4.12.0
