@@ -73,19 +73,7 @@ def run_queries():
 
     # --- 5.1 Select caregiver and member names for the accepted appointments. ---
     print("5.1 Caregiver and Member names for accepted appointments:")
-    results = session.query(
-        User.given_name.label("caregiver_name"), 
-        User.surname.label("caregiver_surname"),
-        User.given_name.label("member_name"),
-        User.surname.label("member_surname")
-    ).select_from(Appointment).join(Caregiver, Appointment.caregiver_user_id == Caregiver.caregiver_user_id)\
-     .join(User, Caregiver.caregiver_user_id == User.user_id)\
-     .join(Member, Appointment.member_user_id == Member.member_user_id)\
-     .join(User, Member.member_user_id == User.user_id, aliased=True)\
-     .filter(Appointment.status == "Confirmed").all()
     
-    # Wait, the join above is tricky with aliasing. Let's do it explicitly.
-    # We need two aliases for User: one for Caregiver, one for Member.
     from sqlalchemy.orm import aliased
     CaregiverUser = aliased(User)
     MemberUser = aliased(User)
@@ -93,7 +81,8 @@ def run_queries():
     results = session.query(
         CaregiverUser.given_name, CaregiverUser.surname,
         MemberUser.given_name, MemberUser.surname
-    ).join(Caregiver, Appointment.caregiver_user_id == Caregiver.caregiver_user_id)\
+    ).select_from(Appointment)\
+     .join(Caregiver, Appointment.caregiver_user_id == Caregiver.caregiver_user_id)\
      .join(CaregiverUser, Caregiver.caregiver_user_id == CaregiverUser.user_id)\
      .join(Member, Appointment.member_user_id == Member.member_user_id)\
      .join(MemberUser, Member.member_user_id == MemberUser.user_id)\
