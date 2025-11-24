@@ -2,7 +2,8 @@ from sqlalchemy import create_engine, func, select, update, delete, and_
 from sqlalchemy.orm import sessionmaker
 from models import Base, User, Caregiver, Member, Address, Job, JobApplication, Appointment
 
-DATABASE_URL = 'sqlite:///caregivers.db'
+# Update the connection string with your MySQL credentials: 'mysql+mysqlconnector://username:password@localhost/dbname'
+DATABASE_URL = 'mysql+mysqlconnector://root:password@localhost/caregivers_db'
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()

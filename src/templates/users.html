@@ -1,8 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Users</h1>
-    <a href="/users/create" class="btn">Add New User</a>
-    <table>
+    <a href="/users/create" class="btn btn-success mb-3">Add New User</a>
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>ID</th>
@@ -20,8 +20,9 @@
                 <td>{{ user.email }}</td>
                 <td>{{ user.city }}</td>
                 <td>
-                    <a href="/users/edit/{{ user.user_id }}" class="btn">Edit</a>
-                    <a href="/users/delete/{{ user.user_id }}" class="btn btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    <a href="/users/{{ user.user_id }}" class="btn btn-sm btn-info">View Profile</a>
+                    <a href="/users/edit/{{ user.user_id }}" class="btn btn-sm btn-primary">Edit</a>
+                    <a href="/users/delete/{{ user.user_id }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
                 </td>
             </tr>
             {% endfor %}

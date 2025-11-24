@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>User Profile</h1>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ user.given_name }} {{ user.surname }}</h5>
+            <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
+            <p class="card-text"><strong>City:</strong> {{ user.city }}</p>
+            <p class="card-text"><strong>Phone:</strong> {{ user.phone_number }}</p>
+            <p class="card-text"><strong>Description:</strong> {{ user.profile_description }}</p>
+
+            {% if user.caregiver_profile %}
+                <hr>
+                <h4>Caregiver Profile</h4>
+                <p><strong>Type:</strong> {{ user.caregiver_profile.caregiving_type }}</p>
+                <p><strong>Hourly Rate:</strong> ${{ user.caregiver_profile.hourly_rate }}</p>
+                <p><strong>Gender:</strong> {{ user.caregiver_profile.gender }}</p>
+            {% endif %}
+
+            {% if user.member_profile %}
+                <hr>
+                <h4>Member Profile</h4>
+                <p><strong>House Rules:</strong> {{ user.member_profile.house_rules }}</p>
+                <p><strong>Dependent Description:</strong> {{ user.member_profile.dependent_description }}</p>
+                {% if user.member_profile.address %}
+                    <h5>Address</h5>
+                    <p>{{ user.member_profile.address.house_number }} {{ user.member_profile.address.street }}, {{ user.member_profile.address.town }}</p>
+                {% endif %}
+            {% endif %}
+
+            <a href="/users/edit/{{ user.user_id }}" class="btn btn-primary">Edit</a>
+            <a href="/users" class="btn btn-secondary">Back to List</a>
+        </div>
+    </div>
+{% endblock %}

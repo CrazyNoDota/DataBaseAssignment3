@@ -1,5 +1,18 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Welcome to the Online Caregivers Platform</h1>
-    <p>Select a section from the menu to manage data.</p>
+    <div class="jumbotron text-center mt-5">
+        <h1 class="display-4">Welcome to the Online Caregivers Platform</h1>
+        <p class="lead">Connect with caregivers or find jobs easily.</p>
+        <hr class="my-4">
+        
+        {% if session.get('user_id') %}
+            <p>Welcome back, {{ session.get('user_name') }}!</p>
+            <a class="btn btn-primary btn-lg" href="/jobs" role="button">Browse Jobs</a>
+            <a class="btn btn-secondary btn-lg" href="/users" role="button">Find Caregivers/Members</a>
+        {% else %}
+            <p>Please login or register to access the platform.</p>
+            <a class="btn btn-primary btn-lg" href="/login" role="button">Login</a>
+            <a class="btn btn-secondary btn-lg" href="/users/create" role="button">Register Now</a>
+        {% endif %}
+    </div>
 {% endblock %}

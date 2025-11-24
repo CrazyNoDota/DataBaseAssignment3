@@ -2,27 +2,116 @@
 {% block content %}
     <h1>{{ action }} User</h1>
     <form method="POST">
-        <label>Email:</label>
-        <input type="email" name="email" value="{{ user.email if user else '' }}" required>
+        <div class="mb-3">
+            <label class="form-label">Email:</label>
+            <input type="email" name="email" class="form-control" value="{{ user.email if user else '' }}" required>
+        </div>
         
-        <label>Given Name:</label>
-        <input type="text" name="given_name" value="{{ user.given_name if user else '' }}" required>
+        <div class="mb-3">
+            <label class="form-label">Given Name:</label>
+            <input type="text" name="given_name" class="form-control" value="{{ user.given_name if user else '' }}" required>
+        </div>
         
-        <label>Surname:</label>
-        <input type="text" name="surname" value="{{ user.surname if user else '' }}" required>
+        <div class="mb-3">
+            <label class="form-label">Surname:</label>
+            <input type="text" name="surname" class="form-control" value="{{ user.surname if user else '' }}" required>
+        </div>
         
-        <label>City:</label>
-        <input type="text" name="city" value="{{ user.city if user else '' }}">
+        <div class="mb-3">
+            <label class="form-label">City:</label>
+            <input type="text" name="city" class="form-control" value="{{ user.city if user else '' }}">
+        </div>
         
-        <label>Phone Number:</label>
-        <input type="text" name="phone_number" value="{{ user.phone_number if user else '' }}">
+        <div class="mb-3">
+            <label class="form-label">Phone Number:</label>
+            <input type="text" name="phone_number" class="form-control" value="{{ user.phone_number if user else '' }}">
+        </div>
         
-        <label>Password:</label>
-        <input type="password" name="password" value="{{ user.password if user else '' }}" required>
+        <div class="mb-3">
+            <label class="form-label">Password:</label>
+            <input type="password" name="password" class="form-control" value="{{ user.password if user else '' }}" required>
+        </div>
         
-        <label>Profile Description:</label>
-        <textarea name="profile_description">{{ user.profile_description if user else '' }}</textarea>
+        <div class="mb-3">
+            <label class="form-label">Profile Description:</label>
+            <textarea name="profile_description" class="form-control">{{ user.profile_description if user else '' }}</textarea>
+        </div>
+
+        <hr>
+        <h3>Role Selection</h3>
+        <div class="mb-3">
+            <label class="form-label">Role:</label>
+            <select name="role" class="form-select" onchange="toggleFields(this.value)">
+                <option value="">Select Role...</option>
+                <option value="caregiver">Caregiver</option>
+                <option value="member">Member</option>
+            </select>
+        </div>
+
+        <div id="caregiver-fields" style="display:none;">
+            <h4>Caregiver Details</h4>
+            <div class="mb-3">
+                <label class="form-label">Photo URL:</label>
+                <input type="text" name="photo" class="form-control" value="{{ user.caregiver_profile.photo if user and user.caregiver_profile else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Gender:</label>
+                <input type="text" name="gender" class="form-control" value="{{ user.caregiver_profile.gender if user and user.caregiver_profile else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Caregiving Type:</label>
+                <input type="text" name="caregiving_type" class="form-control" value="{{ user.caregiver_profile.caregiving_type if user and user.caregiver_profile else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Hourly Rate:</label>
+                <input type="number" step="0.01" name="hourly_rate" class="form-control" value="{{ user.caregiver_profile.hourly_rate if user and user.caregiver_profile else '' }}">
+            </div>
+        </div>
+
+        <div id="member-fields" style="display:none;">
+            <h4>Member Details</h4>
+            <div class="mb-3">
+                <label class="form-label">House Rules:</label>
+                <textarea name="house_rules" class="form-control">{{ user.member_profile.house_rules if user and user.member_profile else '' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Dependent Description:</label>
+                <textarea name="dependent_description" class="form-control">{{ user.member_profile.dependent_description if user and user.member_profile else '' }}</textarea>
+            </div>
+            
+            <h5>Address</h5>
+            <div class="mb-3">
+                <label class="form-label">House Number:</label>
+                <input type="text" name="house_number" class="form-control" value="{{ user.member_profile.address.house_number if user and user.member_profile and user.member_profile.address else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Street:</label>
+                <input type="text" name="street" class="form-control" value="{{ user.member_profile.address.street if user and user.member_profile and user.member_profile.address else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Town:</label>
+                <input type="text" name="town" class="form-control" value="{{ user.member_profile.address.town if user and user.member_profile and user.member_profile.address else '' }}">
+            </div>
+        </div>
+
+        <script>
+            function toggleFields(role) {
+                document.getElementById('caregiver-fields').style.display = role === 'caregiver' ? 'block' : 'none';
+                document.getElementById('member-fields').style.display = role === 'member' ? 'block' : 'none';
+            }
+            
+            // Pre-select role on edit
+            {% if user %}
+                {% if user.caregiver_profile %}
+                    document.querySelector('select[name="role"]').value = 'caregiver';
+                    toggleFields('caregiver');
+                {% elif user.member_profile %}
+                    document.querySelector('select[name="role"]').value = 'member';
+                    toggleFields('member');
+                {% endif %}
+            {% endif %}
+        </script>
         
-        <button type="submit">Save</button>
+        <button type="submit" class="btn btn-primary">Save</button>
     </form>
 {% endblock %}
