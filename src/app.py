@@ -13,7 +13,11 @@ app.secret_key = 'supersecretkey'
 # DATABASE CONFIGURATION
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 # MySQL Connection
-DATABASE_URL = 'mysql+mysqlconnector://root:rootpassword@localhost:3307/caregivers_db'
+#DATABASE_URL = 'mysql+mysqlconnector://root:rootpassword@localhost:3307/caregivers_db'
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "mysql+mysqlconnector://care_user:care_password@127.0.0.1:3306/caregivers_db"  # local dev default
+)
 
 engine = create_engine(DATABASE_URL)
 
