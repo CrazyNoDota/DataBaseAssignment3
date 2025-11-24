@@ -1,7 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Appointments Dashboard</h1>
-    <a href="/appointments/create" class="btn btn-primary mb-3">Book Appointment</a>
+    {% if session.get('role') == 'member' %}
+        <a href="/appointments/create" class="btn btn-primary mb-3">Book Appointment</a>
+    {% endif %}
 
     <table class="table table-striped">
         <thead>
@@ -26,22 +28,27 @@
                 <td>{{ appointment.appointment_time }}</td>
                 <td>{{ appointment.work_hours }}</td>
                 <td>
-                    <span class="badge bg-{{ 'success' if appointment.status == 'Accepted' else 'warning' if appointment.status == 'Pending' else 'danger' }}">
+                    <span class="badge bg-{{ 'success' if appointment.status == 'confirmed' else 'warning' if appointment.status == 'pending' else 'danger' }}">
                         {{ appointment.status }}
                     </span>
                 </td>
                 <td>
-                    <form action="/appointments/{{ appointment.appointment_id }}/update" method="POST" style="display:inline;">
-                        <input type="hidden" name="status" value="Accepted">
-                        <button type="submit" class="btn btn-sm btn-success">Accept</button>
-                    </form>
-                    <form action="/appointments/{{ appointment.appointment_id }}/update" method="POST" style="display:inline;">
-                        <input type="hidden" name="status" value="Declined">
-                        <button type="submit" class="btn btn-sm btn-warning">Decline</button>
-                    </form>
-                    <form action="/appointments/{{ appointment.appointment_id }}/delete" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Cancel</button>
-                    </form>
+                    {% if session.get('role') == 'caregiver' and appointment.status == 'pending' %}
+                        <form action="/appointments/{{ appointment.appointment_id }}/update" method="POST" style="display:inline;">
+                            <input type="hidden" name="status" value="confirmed">
+                            <button type="submit" class="btn btn-sm btn-success">Confirm</button>
+                        </form>
+                        <form action="/appointments/{{ appointment.appointment_id }}/update" method="POST" style="display:inline;">
+                            <input type="hidden" name="status" value="declined">
+                            <button type="submit" class="btn btn-sm btn-warning">Decline</button>
+                        </form>
+                    {% endif %}
+                    
+                    {% if session.get('role') == 'member' and appointment.status == 'pending' %}
+                        <form action="/appointments/{{ appointment.appointment_id }}/delete" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Cancel</button>
+                        </form>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

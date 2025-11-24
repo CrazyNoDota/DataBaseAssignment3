@@ -4,7 +4,12 @@
     <form method="POST">
         <div class="mb-3">
             <label class="form-label">Required Caregiving Type:</label>
-            <input type="text" name="required_caregiving_type" class="form-control" required>
+            <select name="required_caregiving_type" class="form-select" required>
+                <option value="" disabled selected>Select a type</option>
+                <option value="babysitter">Babysitter</option>
+                <option value="elderly_care">Elderly Care</option>
+                <option value="playmate">Playmate for Children</option>
+            </select>
         </div>
 
         <div class="mb-3">

@@ -28,7 +28,14 @@
                 {% endif %}
             {% endif %}
 
-            <a href="/users/edit/{{ user.user_id }}" class="btn btn-primary">Edit</a>
+            {% if session.get('user_id') == user.user_id %}
+                <a href="/users/edit/{{ user.user_id }}" class="btn btn-primary">Edit</a>
+            {% endif %}
+            
+            {% if session.get('role') == 'member' and user.caregiver_profile %}
+                 <a href="/appointments/create?caregiver_id={{ user.user_id }}" class="btn btn-success">Book Appointment</a>
+            {% endif %}
+            
             <a href="/users" class="btn btn-secondary">Back to List</a>
         </div>
     </div>
