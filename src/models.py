@@ -29,8 +29,8 @@ class Caregiver(Base):
     hourly_rate = Column(Float)
 
     user = relationship("User", back_populates="caregiver_profile")
-    job_applications = relationship("JobApplication", back_populates="caregiver")
-    appointments = relationship("Appointment", back_populates="caregiver")
+    job_applications = relationship("JobApplication", back_populates="caregiver", cascade="all, delete-orphan")
+    appointments = relationship("Appointment", back_populates="caregiver", cascade="all, delete-orphan")
 
 class Member(Base):
     __tablename__ = 'MEMBER'
@@ -42,7 +42,7 @@ class Member(Base):
     user = relationship("User", back_populates="member_profile")
     address = relationship("Address", back_populates="member", uselist=False, cascade="all, delete-orphan")
     jobs = relationship("Job", back_populates="member", cascade="all, delete-orphan")
-    appointments = relationship("Appointment", back_populates="member")
+    appointments = relationship("Appointment", back_populates="member", cascade="all, delete-orphan")
 
 class Address(Base):
     __tablename__ = 'ADDRESS'

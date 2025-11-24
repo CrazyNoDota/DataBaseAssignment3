@@ -4,10 +4,9 @@ from datetime import date, time
 from models import Base, User, Caregiver, Member, Address, Job, JobApplication, Appointment
 
 # Setup database connection
-# Using SQLite for local demonstration. 
-# To use PostgreSQL: 'postgresql://user:password@localhost/dbname'
-# To use MySQL: 'mysql+mysqlconnector://user:password@localhost/dbname'
-DATABASE_URL = 'sqlite:///caregivers.db'
+# Using MySQL
+# Update the connection string with your MySQL credentials: 'mysql+mysqlconnector://username:password@localhost/dbname'
+DATABASE_URL = 'mysql+mysqlconnector://root:password@localhost/caregivers_db'
 
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)

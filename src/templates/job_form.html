@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Post a Job</h1>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Required Caregiving Type:</label>
+            <input type="text" name="required_caregiving_type" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Other Requirements:</label>
+            <textarea name="other_requirements" class="form-control"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Date Posted:</label>
+            <input type="date" name="date_posted" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Post Job</button>
+    </form>
+{% endblock %}

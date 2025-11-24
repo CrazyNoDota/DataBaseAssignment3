@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Book Appointment</h1>
+    <form method="POST">
+        <div class="mb-3">
+            <label class="form-label">Caregiver:</label>
+            <select name="caregiver_user_id" class="form-select" required>
+                {% for caregiver in caregivers %}
+                    <option value="{{ caregiver.caregiver_user_id }}">{{ caregiver.user.given_name }} {{ caregiver.user.surname }} ({{ caregiver.caregiving_type }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Date:</label>
+            <input type="date" name="appointment_date" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Time:</label>
+            <input type="time" name="appointment_time" class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Work Hours:</label>
+            <input type="number" name="work_hours" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Book</button>
+    </form>
+{% endblock %}

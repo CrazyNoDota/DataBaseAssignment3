@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Login</h1>
+    <form method="POST" style="max-width: 400px; margin: auto;">
+        <div class="mb-3">
+            <label class="form-label">Email:</label>
+            <input type="email" name="email" class="form-control" required>
+        </div>
+        
+        <div class="mb-3">
+            <label class="form-label">Password:</label>
+            <input type="password" name="password" class="form-control" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-100">Login</button>
+    </form>
+    <div class="text-center mt-3">
+        <p>Don't have an account? <a href="/users/create">Register here</a></p>
+    </div>
+{% endblock %}

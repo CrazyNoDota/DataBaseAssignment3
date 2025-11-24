@@ -1,0 +1,113 @@
+Based on Part 3 of the assignment, you are required to build a web application with CRUD (Create, Read, Update, Delete) functionality for each table in your schema.
+
+Since you are using Flask, the simplest and most integrated front-end approach is to use Jinja2 templates (HTML files with Python logic embedded in them). You do not need a complex framework like React or Vue.
+
+Here are the essential front-end features and pages you need to satisfy the requirements while keeping it simple:
+
+1. Common Layout (Base Template)
+
+To keep code simple, create a base.html that other pages extend.
+
+Navigation Bar: Simple links to access the main sections: "Caregivers," "Members," "Jobs," "Appointments," and "Register."
+
+Flash Messages: A small area to display success/error messages (e.g., "Job Deleted," "User Updated") coming from Flask.
+
+2. User & Profile Management (The USER, CAREGIVER, MEMBER, ADDRESS tables)
+
+You need forms to handle the registration logic described on Page 1.
+
+Registration/Create Page:
+
+A form to Create a USER.
+
+A dropdown/checkbox to select the role (Caregiver vs. Member).
+
+Depending on the role, show extra fields (Hourly Rate for Caregivers; House Rules for Members).
+
+Tip: Since ADDRESS is a separate table, you can either include address fields in the main registration form (and handle the split in the backend) or have an "Add Address" button on the user's profile.
+
+All Users List (Read):
+
+A simple HTML table displaying all users with columns like Name, Role, City.
+
+Action Buttons: "View Profile," "Edit," "Delete" next to each row.
+
+Profile Detail View:
+
+Displays specific data for that user (combines USER table data with CAREGIVER or MEMBER data).
+
+If it is a Member, display their associated ADDRESS.
+
+Edit Profile Form (Update):
+
+Pre-filled input fields allowing the user to change their phone number, hourly rate, or rules.
+
+3. The Job Board (The JOB and JOB_APPLICATION tables)
+
+This covers the requirement on Page 2 (Section 4) about posting and applying for jobs.
+
+Job Listings Page (Read):
+
+Display all rows from the JOB table.
+
+Search/Filter: A simple text input or dropdown to filter by "Caregiving Type" or "City" (as required by Section 3).
+
+"Apply" Button: A form button next to each job that creates a row in the JOB_APPLICATION table.
+
+Post a Job Page (Create):
+
+A form with fields: required_caregiving_type, other_requirements, date_posted.
+
+This inserts a new row into the JOB table.
+
+My Applications View:
+
+For Members: A view showing who has applied to their jobs.
+
+For Caregivers: A view showing jobs they have applied for.
+
+Delete Button: To withdraw an application (CRUD Delete).
+
+4. Appointment System (The APPOINTMENT table)
+
+This covers Page 2 (Section 6).
+
+Book Appointment Form (Create):
+
+A form where a Member selects a Date, Hour, and Work Hours.
+
+The Caregiver ID is usually passed as a hidden field or via the URL.
+
+Appointments Dashboard (Read & Update):
+
+A table listing all appointments.
+
+Status Column: Shows "Pending," "Accepted," or "Declined."
+
+Action Buttons:
+
+"Accept/Decline" buttons (Updates the status field in the APPOINTMENT table).
+
+"Cancel" button (Deletes the row or sets status to cancelled).
+
+Summary of HTML Templates Needed
+
+To minimize work, you only strictly need these HTML files in your Flask templates folder:
+
+layout.html: Navigation and footer.
+
+index.html: Landing page.
+
+list_generic.html: A reusable table page. You can pass data from any table (Jobs, Users, Appointments) to this one template to display it.
+
+form_generic.html: A reusable form page. You can pass different form fields (using Flask-WTF or raw HTML) to this single template to handle Creates and Updates for all tables.
+
+profile.html: To show the details of a specific entity.
+
+Technical Simplification Tips
+
+Use Bootstrap (CDN): Include one line of CSS in your header to make the plain HTML tables and forms look decent without writing custom CSS.
+
+No JavaScript needed: You can do everything with standard HTML <form action="/route" method="POST">.
+
+Raw SQL or ORM: The front end doesn't care. Just ensure your Flask routes pass variables like {{ users }} or {{ jobs }} to the templates.

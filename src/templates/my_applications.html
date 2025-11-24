@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>My Applications</h1>
+    
+    {% if applications %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Job ID</th>
+                    <th>Job Type</th>
+                    <th>Caregiver</th>
+                    <th>Date Applied</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for app in applications %}
+                <tr>
+                    <td>{{ app.job_id }}</td>
+                    <td>{{ app.job.required_caregiving_type }}</td>
+                    <td>{{ app.caregiver.user.given_name }} {{ app.caregiver.user.surname }}</td>
+                    <td>{{ app.date_applied }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No applications found.</p>
+    {% endif %}
+{% endblock %}
