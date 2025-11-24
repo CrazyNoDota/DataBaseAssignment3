@@ -1,13 +1,15 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Users</h1>
-    <a href="/users/create" class="btn btn-success mb-3">Add New User</a>
+    <h1>{% if session.get('role') == 'member' %}Caregivers{% else %}Users{% endif %}</h1>
+    
+    {% if not session.get('user_id') %}
+    <a href="/users/create" class="btn btn-success mb-3">Register New User</a>
+    {% endif %}
+
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Name</th>
-                <th>Email</th>
                 <th>City</th>
                 <th>Actions</th>
             </tr>
@@ -15,14 +17,14 @@
         <tbody>
             {% for user in users %}
             <tr>
-                <td>{{ user.user_id }}</td>
                 <td>{{ user.given_name }} {{ user.surname }}</td>
-                <td>{{ user.email }}</td>
                 <td>{{ user.city }}</td>
                 <td>
                     <a href="/users/{{ user.user_id }}" class="btn btn-sm btn-info">View Profile</a>
-                    <a href="/users/edit/{{ user.user_id }}" class="btn btn-sm btn-primary">Edit</a>
-                    <a href="/users/delete/{{ user.user_id }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    {% if session.get('user_id') == user.user_id %}
+                        <a href="/users/edit/{{ user.user_id }}" class="btn btn-sm btn-primary">Edit</a>
+                        <a href="/users/delete/{{ user.user_id }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

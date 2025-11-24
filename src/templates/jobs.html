@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>Jobs</h1>
+    <h1>{% if session.get('role') == 'member' %}My Posted Jobs{% else %}Available Jobs{% endif %}</h1>
     
     <div class="row mb-3">
         <div class="col-md-6">
@@ -10,15 +10,18 @@
             </form>
         </div>
         <div class="col-md-6 text-end">
-            <a href="/jobs/create" class="btn btn-primary">Post a Job</a>
-            <a href="/my_applications" class="btn btn-info">My Applications</a>
+            {% if session.get('role') == 'member' %}
+                <a href="/jobs/create" class="btn btn-primary">Post a Job</a>
+                <a href="/my_applications" class="btn btn-info">View Applicants</a>
+            {% elif session.get('role') == 'caregiver' %}
+                <a href="/my_applications" class="btn btn-info">My Applications</a>
+            {% endif %}
         </div>
     </div>
 
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Type</th>
                 <th>Requirements</th>
                 <th>Date Posted</th>
@@ -28,14 +31,17 @@
         <tbody>
             {% for job in jobs %}
             <tr>
-                <td>{{ job.job_id }}</td>
                 <td>{{ job.required_caregiving_type }}</td>
                 <td>{{ job.other_requirements }}</td>
                 <td>{{ job.date_posted }}</td>
                 <td>
-                    <form action="/jobs/{{ job.job_id }}/apply" method="POST" class="d-flex">
-                        <button type="submit" class="btn btn-sm btn-success">Apply</button>
-                    </form>
+                    {% if session.get('role') == 'caregiver' %}
+                        <form action="/jobs/{{ job.job_id }}/apply" method="POST" class="d-flex">
+                            <button type="submit" class="btn btn-sm btn-success">Apply</button>
+                        </form>
+                    {% elif session.get('role') == 'member' %}
+                        <span class="badge bg-secondary">Posted by you</span>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}

@@ -7,8 +7,14 @@
         
         {% if session.get('user_id') %}
             <p>Welcome back, {{ session.get('user_name') }}!</p>
-            <a class="btn btn-primary btn-lg" href="/jobs" role="button">Browse Jobs</a>
-            <a class="btn btn-secondary btn-lg" href="/users" role="button">Find Caregivers/Members</a>
+            
+            {% if session.get('role') == 'caregiver' %}
+                <a class="btn btn-primary btn-lg" href="/jobs" role="button">Browse Jobs</a>
+            {% elif session.get('role') == 'member' %}
+                <a class="btn btn-primary btn-lg" href="/users" role="button">Find Caregivers</a>
+                <a class="btn btn-secondary btn-lg" href="/jobs/create" role="button">Post a Job</a>
+            {% endif %}
+            
         {% else %}
             <p>Please login or register to access the platform.</p>
             <a class="btn btn-primary btn-lg" href="/login" role="button">Login</a>

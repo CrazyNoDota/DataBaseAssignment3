@@ -65,12 +65,25 @@ def login():
         password = request.form['password']
         
         session = Session()
-        user = session.query(User).filter_by(email=email).first()
+        # Eager load profiles to determine role
+        user = session.query(User).options(
+            joinedload(User.caregiver_profile),
+            joinedload(User.member_profile)
+        ).filter_by(email=email).first()
         session.close()
         
         if user and user.password == password: # In production, use password hashing!
             flask_session['user_id'] = user.user_id
             flask_session['user_name'] = user.given_name
+            
+            # Determine Role
+            if user.caregiver_profile:
+                flask_session['role'] = 'caregiver'
+            elif user.member_profile:
+                flask_session['role'] = 'member'
+            else:
+                flask_session['role'] = 'unknown'
+
             flash(f'Welcome back, {user.given_name}!', 'success')
             return redirect(url_for('index'))
         else:
@@ -88,8 +101,25 @@ def logout():
 @app.route('/users')
 @login_required
 def list_users():
+    role = flask_session.get('role')
+    
+    # Caregivers should not see the list of other caregivers or members
+    if role == 'caregiver':
+        flash('Access denied. Caregivers cannot browse the user list.', 'warning')
+        return redirect(url_for('index'))
+
     session = Session()
-    users = session.query(User).all()
+    # If Member, show only Caregivers
+    if role == 'member':
+        # Join User to get names
+        caregivers = session.query(Caregiver).options(joinedload(Caregiver.user)).all()
+        # Transform to list of users for the template compatibility, or update template
+        # The template likely expects User objects. Let's pass User objects that are caregivers.
+        users = [c.user for c in caregivers]
+    else:
+        # Fallback or Admin view (if existed)
+        users = session.query(User).all()
+        
     session.close()
     return render_template('users.html', users=users)
 
@@ -236,10 +266,19 @@ def delete_user(id):
 @app.route('/jobs')
 @login_required
 def list_jobs():
+    role = flask_session.get('role')
+    user_id = flask_session.get('user_id')
+    
     session = Session()
     query = session.query(Job)
     
-    # Filtering
+    # Members should only see their own jobs (or maybe none if they only post?)
+    # Requirement: "Caregivers can then search through these announcements"
+    # Requirement: "Members can view the profiles of applicants..." (implies they see their jobs to click on them)
+    if role == 'member':
+        query = query.filter(Job.member_user_id == user_id)
+    
+    # Filtering (mostly for Caregivers)
     caregiving_type = request.args.get('caregiving_type')
     if caregiving_type:
         query = query.filter(Job.required_caregiving_type.ilike(f'%{caregiving_type}%'))
